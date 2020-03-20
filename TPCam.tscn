@@ -1,0 +1,41 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://target_mat.tres" type="Material" id=1]
+[ext_resource path="res://TPCam.gd" type="Script" id=2]
+
+[sub_resource type="CubeMesh" id=1]
+
+[sub_resource type="SphereMesh" id=2]
+material = ExtResource( 1 )
+radial_segments = 8
+rings = 8
+
+[node name="TPCam" type="Spatial"]
+script = ExtResource( 2 )
+
+[node name="XGimbal" type="Spatial" parent="."]
+
+[node name="Camera" type="Camera" parent="XGimbal"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5 )
+doppler_tracking = 2
+near = 0.01
+far = 1500.0
+
+[node name="MeshInstance" type="MeshInstance" parent="XGimbal/Camera"]
+transform = Transform( 0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0, 0, 0 )
+cast_shadow = 0
+mesh = SubResource( 1 )
+material/0 = null
+
+[node name="RayCast" type="RayCast" parent="XGimbal"]
+enabled = true
+cast_to = Vector3( 0, 0, 5 )
+__meta__ = {
+"_editor_description_": "The raycast casts from the Camera Target back to the Camera itself.
+
+If it finds anything, the camera's position will be updated accordingly."
+}
+
+[node name="Target" type="MeshInstance" parent="XGimbal"]
+mesh = SubResource( 2 )
+material/0 = null
