@@ -11,7 +11,7 @@ export (NodePath) var FollowTarget
 # Export variables that can be used to modify camera behavior
 export (int, 1, 3) var ViewDistances = 3
 export (int, 3, 8) var ViewDistanceStep = 5
-export (float, 0.01, 0.09) var CameraLerpSpeed = 0.07
+export (float, 0.01, 0.09) var CameraLerpSpeed = 0.03
 
 var follow_target = null
 var view_distances = []
@@ -82,8 +82,6 @@ func update_gimbal_position():
 	global_transform.origin = lerp(global_transform.origin, 
 		follow_target.global_transform.origin + gimbal_offset, 
 		CameraLerpSpeed)
-		
-	# useless comment
 
 # This function updates the camera's distance
 func update_camera_distance():
@@ -111,17 +109,17 @@ func calculate_new_distance_if_hit():
 	if $XGimbal/RayCast.is_colliding():
 		# Make sure we aren't in the noclip group
 		if !$XGimbal/RayCast.get_collider().is_in_group("noclip"):
+			
 			# Store the hit position
 			var hit_position = $XGimbal/RayCast.get_collision_point()
 			
 			# Measure the distance between the raycast's origin to the hit point
 			var measure = $XGimbal/RayCast.global_transform.origin - hit_position
-			var new_distance = measure.length() - 0.5
+			var new_distance = measure.length()
 			
 			# Adjust the camera's distance to the new measured distance
 			MainCamera.transform.origin.z = new_distance
 
-			
 			# Cap the camera to a minimum distance, for now
-			if MainCamera.transform.origin.z <= -1:
-				MainCamera.transform.origin.z = -1
+			if MainCamera.transform.origin.z <= -2:
+				MainCamera.transform.origin.z = -2
