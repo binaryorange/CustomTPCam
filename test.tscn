@@ -25,6 +25,7 @@ material/0 = null
 
 [node name="TPCam" parent="." instance=ExtResource( 1 )]
 FollowTarget = NodePath("../MeshInstance")
+RaycastMargin = 0.9
 
 [node name="Camera" type="Camera" parent="."]
 transform = Transform( -1.62921e-07, 0.377744, -0.92591, 0, 0.92591, 0.377744, 1, 6.15423e-08, -1.5085e-07, -14.062, 7.535, 2.163 )

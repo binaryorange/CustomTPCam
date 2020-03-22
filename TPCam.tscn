@@ -1,9 +1,11 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://target_mat.tres" type="Material" id=1]
 [ext_resource path="res://TPCam.gd" type="Script" id=2]
 
 [sub_resource type="CubeMesh" id=1]
+
+[sub_resource type="SphereShape" id=3]
 
 [sub_resource type="SphereMesh" id=2]
 material = ExtResource( 1 )
@@ -12,12 +14,36 @@ rings = 8
 
 [node name="TPCam" type="Spatial"]
 script = ExtResource( 2 )
+RaycastMargin = 0.75
 
 [node name="XGimbal" type="Spatial" parent="."]
+
+[node name="Raycasts" type="Spatial" parent="XGimbal"]
+
+[node name="Top" type="RayCast" parent="XGimbal/Raycasts"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0 )
+enabled = true
+cast_to = Vector3( 0, 0, 5 )
+
+[node name="Bottom" type="RayCast" parent="XGimbal/Raycasts"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0 )
+enabled = true
+cast_to = Vector3( 0, 0, 5 )
+
+[node name="Left" type="RayCast" parent="XGimbal/Raycasts"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 0, 0 )
+enabled = true
+cast_to = Vector3( 0, 0, 5 )
+
+[node name="Right" type="RayCast" parent="XGimbal/Raycasts"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, 0 )
+enabled = true
+cast_to = Vector3( 0, 0, 5 )
 
 [node name="Camera" type="Camera" parent="XGimbal"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5 )
 doppler_tracking = 2
+fov = 60.0
 near = 0.01
 far = 1500.0
 
@@ -27,7 +53,13 @@ cast_shadow = 0
 mesh = SubResource( 1 )
 material/0 = null
 
-[node name="RayCast" type="RayCast" parent="XGimbal"]
+[node name="CollisionProbe" type="Area" parent="XGimbal/Camera"]
+
+[node name="Radius" type="CollisionShape" parent="XGimbal/Camera/CollisionProbe"]
+shape = SubResource( 3 )
+
+[node name="DistanceAdjuster" type="RayCast" parent="XGimbal"]
+visible = false
 enabled = true
 cast_to = Vector3( 0, 0, 5 )
 __meta__ = {
@@ -39,3 +71,5 @@ If it finds anything, the camera's position will be updated accordingly."
 [node name="Target" type="MeshInstance" parent="XGimbal"]
 mesh = SubResource( 2 )
 material/0 = null
+[connection signal="body_entered" from="XGimbal/Camera/CollisionProbe" to="." method="_on_CollisionProbe_body_entered"]
+[connection signal="body_exited" from="XGimbal/Camera/CollisionProbe" to="." method="_on_CollisionProbe_body_exited"]
